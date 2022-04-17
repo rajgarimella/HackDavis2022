@@ -2,12 +2,11 @@ from flask import Flask, redirect, url_for, render_template, request, session, f
 from datetime import timedelta
 from flask_wtf import FlaskForm
 from wtforms import FileField, SubmitField
-from flask import Flask, redirect, url_for, render_template, request, session, flash, send_file
-from datetime import timedelta
-from flask_wtf import FlaskForm
-from wtforms import FileField, SubmitField
 from werkzeug.utils import secure_filename
 import os 
+import tensorflow
+import keras
+
 
 #from views import views
 #import numpy as np
@@ -37,17 +36,14 @@ def test():
 def home():
     if request.method == 'POST':
         
+        if request.form.get("GetModel") == "MODEL":
+            return redirect(url_for("about")) 
         
-        if request.form.get('action1') == "RUN":
-            # session.permanent = True
-            user = request.form["action1"]
-            session["user"] = user
-            session["user2"] = "BOB"
-            return redirect(url_for("user"))
+        # elif request.form.get("GetResults") == "RESULTS":
+        #     return redirect(url_for("team"))
+
         
         elif request.form.get("About") == "ABOUT":
-            about = request.form["About"]
-            session["about"] = about
             return redirect(url_for("about"))
         
         # elif request.form.get("Home") == "HOME":
@@ -57,21 +53,18 @@ def home():
         
         
         elif request.form.get("Team") == "TEAM":
-            about = request.form["Team"]
-            session["team"] = about
             return redirect(url_for("team"))
 
         elif request.form.get("Settings") == "SETTINGS":
-            about = request.form["Settings"]
-            session["settings"] = about
             return redirect(url_for("settings"))
         
         elif request.files.getlist('files'):
             
             for f in request.files.getlist('files'):
-                f.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
-
-            return render_template("home.html")
+                if f.filename:
+                    f.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+                else:
+                    return render_template("home.html")
         
         else:
             return render_template("home.html")
@@ -123,7 +116,7 @@ def about():
         elif request.form.get("Home") == "HOME":
             about = request.form["Home"]
             session["home"] = about
-            return redirect(url_for("logout"))
+            return redirect(url_for("/"))
         
         
         elif request.form.get("Team") == "TEAM":
@@ -165,7 +158,7 @@ def settings():
         elif request.form.get("Home") == "HOME":
             about = request.form["Home"]
             session["home"] = about
-            return redirect(url_for("logout"))
+            return redirect(url_for("/"))
         
         
         elif request.form.get("Team") == "TEAM":
@@ -206,7 +199,7 @@ def team():
         elif request.form.get("Home") == "HOME":
             about = request.form["Home"]
             session["home"] = about
-            return redirect(url_for("logout"))
+            return redirect(url_for("/"))
         
         
         elif request.form.get("Team") == "TEAM":
