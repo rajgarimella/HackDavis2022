@@ -19,6 +19,7 @@ from keras.models import Sequential
 import numpy as np
 import image_dataset_loader
 
+#This special function imports training/testing images/labels from a hierarchy of folders, inferring labels based on folder names and setting based on similar metadata between images.
 (trainDataImage, trainDataLabel), (testDataImage, testDataLabel)                                            = image_dataset_loader.load('./PneumoniaDataset', ['TrainingData', 'TestingData'])
 
 model = Sequential()
@@ -45,6 +46,7 @@ model.add(Dense(2, activation='softmax'))
 
 model.summary()
 
+# This function will take a variable, number of rows (corresponds to the number of images/labels in the variable), and check for a boolean that shows whether the variable being reshaped is an image
 def Reshaper(var, imNumber, isImage):
     if(isImage==True):
         np.reshape(var, (imNumber, 64, 64, 3))
@@ -71,6 +73,7 @@ trainDataLabel = OneHotEncode(trainDataLabel, 2800)
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
+# Here, we give the model a training dataset to estimate from and a training answer set to score itself on, which correspond to the images and labels respectively.
 model.fit(trainDataImage, trainDataLabel, epochs=25, batch_size=25)
 
 testDataImage = Reshaper(testDataImage, 400, True)
