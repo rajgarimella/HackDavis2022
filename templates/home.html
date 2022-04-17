@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing home page</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='mystyle.css')}}">
+
+</head>
+<body>
+
+    
+    <div>
+        <h1>Upload a file
+
+        </h1>
+
+        <form method="post" action="/" enctype="multipart/form-data" class="form-inline">
+            <div class="form-group">
+                <label>Choose Images: </label>
+                <input type="file" name="files" id="fileInput" class="form-control" multiple/>
+            </div>
+            <input type="submit" name="submit" class="btn btn-success" value="UPLOAD"/>
+        </form>
+
+        <h2>Download a file</h2>
+        <p>
+            <a href="{{url_for('download_file')}}">Download</a>
+        </p>
+
+        <p>
+            {{content}}
+        </p>
+        {% for _ in range(10) %}
+            <p>Hello</p>
+        {%endfor %}
+    </div>
+</body>
+</html>
