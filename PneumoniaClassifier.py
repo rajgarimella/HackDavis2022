@@ -31,11 +31,11 @@ testData = tensorflow.keras.preprocessing.image_dataset_from_directory(
     image_size=(64, 64))
 
 
-#trainDataImage = np.concatenate([ x for x, y in trainData ], axis=0)
-#trainDataLabel = np.concatenate([ y for x, y in trainData ], axis=0)
+trainDataImage = np.concatenate([ x for x, y in trainData ], axis=0)
+trainDataLabel = np.concatenate([ y for x, y in trainData ], axis=0)
 
-#testDataImage  = np.concatenate([ x for x, y in testData  ], axis=0)
-#testDataLabel  = np.concatenate([ y for x, y in testData  ], axis=0)
+testDataImage  = np.concatenate([ x for x, y in testData  ], axis=0)
+testDataLabel  = np.concatenate([ y for x, y in testData  ], axis=0)
 
 
 model.add(Conv2D(60, kernel_size = 1, activation='relu', input_shape=(64, 64, 1), padding='same'))
@@ -67,10 +67,8 @@ def Reshaper(var, imNumber, isImage):
         np.reshape(var, (imNumber, 1))
     return var
 
-#trainDataImage = Reshaper(trainDataImage, 500, True)
-#trainDataLabel = Reshaper(trainDataLabel, 500, False)
-
-#np.reshape(trainData, (1, 500, 64, 64, 1))
+trainDataImage = Reshaper(trainDataImage, 500, True)
+trainDataLabel = Reshaper(trainDataLabel, 500, False)
 
 def OneHotEncode(DataLabel, labelNum):
     OneHot = np.zeros((labelNum, 2))
@@ -82,18 +80,17 @@ def OneHotEncode(DataLabel, labelNum):
 
     return OneHot
 
-#trainDataLabel = OneHotEncode(trainDataLabel, 500)
+trainDataLabel = OneHotEncode(trainDataLabel, 500)
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(trainData, epochs=25, batch_size=5)
+model.fit(trainDataImage, trainDataLabel, epochs=2, batch_size=25)
 
-#testDataImage = Reshaper(testDataImage, 500, True)
-#testDataLabel = Reshaper(testDataLabel, 500, False)
-#testDataLabel = OneHotEncode(testDataLabel, 500)
-#np.reshape(testData, (500, 64, 64, 1, 1))
+testDataImage = Reshaper(testDataImage, 500, True)
+testDataLabel = Reshaper(testDataLabel, 500, False)
+testDataLabel = OneHotEncode(testDataLabel, 500)
 
-output = model.evaluate(testData, verbose=True, batch_size=5)
+output = model.evaluate(testDataImage, testDataLabel, verbose=True, batch_size=5)
 
 print("The model loss and accuracy respectively:", output)
 
