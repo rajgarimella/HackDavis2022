@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Login Page{% endblock %}
+<head>
+</head>
+    <link rel="stylesheet" href="static/home.css">
+<body>
+    <div>
+        {% block content %}
+       
+    <br/>
+        <div class="center">
+            <form method="post" action="/" enctype="multipart/form-data">
+              <p>  <input type="file" name="files" multiple/> </p>
+              <p>  <input type="submit" name="submit" class="btn btn-success btn-lg" value="UPLOAD"/> </p>
+            </form>
+        </div>
+        <br/>
+
+        <div class="center">
+            <p>
+                <a href="{{url_for('download_file')}}">Download Results</a>
+            </p>
+        </div>
+
+        <div class="center">
+            <button type="button" class="btn btn-secondary btn-lg">Run Program </button>
+        </div>
+
+
+
+        {% endblock %}
+    </div>
+<body>
+  
+ 
+
+head
