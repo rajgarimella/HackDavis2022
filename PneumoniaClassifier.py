@@ -1,6 +1,11 @@
 
 # Created by James Jasper Fadden O'ROarke
 # This is a image classifer built from the Keras python library and based on previous machine learning attempts. It is designed to determine whether a lung scan is suffering from pneumonia or is healthy, serving as a core part of the project. There is logic for the classifer framework, training the classifer, and saving/loading for use. 
+import flask
+import wtforms
+import werkzeug.utils
+import flask_wtf
+import datetime
 
 import tensorflow
 import keras
@@ -12,33 +17,13 @@ from keras.layers import Flatten
 from keras.layers import MaxPool2D
 from keras.models import Sequential
 import numpy as np
+import image_dataset_loader
+
+(trainDataImage, trainDataLabel), (testDataImage, testDataLabel)                                            = image_dataset_loader.load('./PneumoniaDataset', ['TrainingData', 'TestingData'])
 
 model = Sequential()
 
-trainData = tensorflow.keras.preprocessing.image_dataset_from_directory(
-    directory='TrainingData/',
-    labels='inferred',
-    label_mode='int',
-    color_mode="grayscale",
-    batch_size=5,
-    image_size=(64, 64))
-testData = tensorflow.keras.preprocessing.image_dataset_from_directory(
-    directory='TestingData/',
-    labels='inferred',
-    label_mode='int',
-    color_mode="grayscale",
-    batch_size=5,
-    image_size=(64, 64))
-
-
-trainDataImage = np.concatenate([ x for x, y in trainData ], axis=0)
-trainDataLabel = np.concatenate([ y for x, y in trainData ], axis=0)
-
-testDataImage  = np.concatenate([ x for x, y in testData  ], axis=0)
-testDataLabel  = np.concatenate([ y for x, y in testData  ], axis=0)
-
-
-model.add(Conv2D(60, kernel_size = 1, activation='relu', input_shape=(64, 64, 1), padding='same'))
+model.add(Conv2D(60, kernel_size = 1, activation='relu', input_shape=(64, 64, 3), padding='same'))
 model.add(Dropout(0.2))
 
 model.add(Conv2D(35, kernel_size = 1, activation='relu', padding='same'))
@@ -62,13 +47,13 @@ model.summary()
 
 def Reshaper(var, imNumber, isImage):
     if(isImage==True):
-        np.reshape(var, (imNumber, 64, 64, 1))
+        np.reshape(var, (imNumber, 64, 64, 3))
     else:
         np.reshape(var, (imNumber, 1))
     return var
 
-trainDataImage = Reshaper(trainDataImage, 500, True)
-trainDataLabel = Reshaper(trainDataLabel, 500, False)
+trainDataImage = Reshaper(trainDataImage, 2800, True)
+trainDataLabel = Reshaper(trainDataLabel, 2800, False)
 
 def OneHotEncode(DataLabel, labelNum):
     OneHot = np.zeros((labelNum, 2))
@@ -80,15 +65,17 @@ def OneHotEncode(DataLabel, labelNum):
 
     return OneHot
 
-trainDataLabel = OneHotEncode(trainDataLabel, 500)
+trainDataLabel = OneHotEncode(trainDataLabel, 2800)
+
+
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(trainDataImage, trainDataLabel, epochs=2, batch_size=25)
+model.fit(trainDataImage, trainDataLabel, epochs=25, batch_size=25)
 
-testDataImage = Reshaper(testDataImage, 500, True)
-testDataLabel = Reshaper(testDataLabel, 500, False)
-testDataLabel = OneHotEncode(testDataLabel, 500)
+testDataImage = Reshaper(testDataImage, 400, True)
+testDataLabel = Reshaper(testDataLabel, 400, False)
+testDataLabel = OneHotEncode(testDataLabel, 400)
 
 output = model.evaluate(testDataImage, testDataLabel, verbose=True, batch_size=5)
 
