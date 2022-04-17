@@ -1,0 +1,36 @@
+
+
+h6 {
+    color: red;
+}
+
+h2 {
+
+    color: red;
+    /* margin-left: 400px; */
+
+}
+
+
+body {
+    background-image: linear-gradient(rgba(161, 175, 231, 0.7), rgba(23, 47, 140, 0.7)), url("website_images/background1.jpg");
+    min-height: 100vh; 
+    width: 100%;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+
+.center {
+    text-align: center;
+  }
+  
+.btn-secondary {
+    background-color: #343a40;
+    outline-color: 343a40;
+}
+
+.form-control {
+    color: purple;
+}
+
