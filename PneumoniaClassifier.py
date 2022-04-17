@@ -18,9 +18,10 @@ from keras.layers import MaxPool2D
 from keras.models import Sequential
 import numpy as np
 import image_dataset_loader
+import os
 
 #This special function imports training/testing images/labels from a hierarchy of folders, inferring labels based on folder names and setting based on similar metadata between images.
-(trainDataImage, trainDataLabel), (testDataImage, testDataLabel)                                            = image_dataset_loader.load('./PneumoniaDataset', ['TrainingData', 'TestingData'])
+(trainDataImage, trainDataLabel), = image_dataset_loader.load('./PneumoniaDataset', ['TrainingData'])
 
 model = Sequential()
 
@@ -54,8 +55,10 @@ def Reshaper(var, imNumber, isImage):
         np.reshape(var, (imNumber, 1))
     return var
 
-trainDataImage = Reshaper(trainDataImage, 2800, True)
-trainDataLabel = Reshaper(trainDataLabel, 2800, False)
+numImages = len(os.listdir('./PneumoniaDataset/TrainingData/healthyyy')) + len(os.listdir('./PneumoniaDataset/TrainingData/pneumonia'))
+
+trainDataImage = Reshaper(trainDataImage, numImages, True)
+trainDataLabel = Reshaper(trainDataLabel, numImages, False)
 
 def OneHotEncode(DataLabel, labelNum):
     OneHot = np.zeros((labelNum, 2))
@@ -67,7 +70,7 @@ def OneHotEncode(DataLabel, labelNum):
 
     return OneHot
 
-trainDataLabel = OneHotEncode(trainDataLabel, 2800)
+trainDataLabel = OneHotEncode(trainDataLabel, numImages)
 
 
 
@@ -76,13 +79,7 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 # Here, we give the model a training dataset to estimate from and a training answer set to score itself on, which correspond to the images and labels respectively.
 model.fit(trainDataImage, trainDataLabel, epochs=25, batch_size=25)
 
-testDataImage = Reshaper(testDataImage, 400, True)
-testDataLabel = Reshaper(testDataLabel, 400, False)
-testDataLabel = OneHotEncode(testDataLabel, 400)
-
-output = model.evaluate(testDataImage, testDataLabel, verbose=True, batch_size=5)
-
-print("The model loss and accuracy respectively:", output)
+#print("Model Saved.")
 
 model.save('PneumoniaModel.h5')
 
